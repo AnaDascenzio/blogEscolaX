@@ -7,7 +7,8 @@
     "start:dev": "tsx watch src/app.ts",
     "start": "node build/app.js",
     "build": "tsup src --out-dir build",
-    "lint": "eslint src --ext .ts"
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit"
   },
   "repository": {
     "type": "git",

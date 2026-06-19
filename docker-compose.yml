@@ -1,0 +1,51 @@
+
+services:
+  app:
+    image: node:20-alpine
+    container_name: blog_escola_x_app
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_USER=superuser
+      - DATABASE_PASSWORD=superuser123
+      - DATABASE_NAME=blog_db
+    command: npm run start:dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - blog_network
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: blog_escola_x_postgres
+    environment:
+      - POSTGRES_USER=superuser
+      - POSTGRES_PASSWORD=superuser123
+      - POSTGRES_DB=blog_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - blog_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U superuser -d blog_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  blog_network:
+    driver: bridge

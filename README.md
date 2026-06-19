@@ -1,1 +1,4 @@
-Documentação do projeto
+- start do projeto
+- npm install
+- npm run build
+- npm start

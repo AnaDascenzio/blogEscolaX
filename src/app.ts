@@ -5,7 +5,7 @@ import express from 'express';
 const app = express();
 
 app.get('/', (_req, res) => {
-  res.send('Hello World!');
+  res.send('Hello World, testando fluxo CI!');
 });
 
 app.listen(3000, () => {

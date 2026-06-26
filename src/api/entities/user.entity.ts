@@ -7,15 +7,16 @@ import {
   Index,
   OneToMany
 } from "typeorm";
-import { UserRole } from "../enums/UserRole";
-import { Post } from "./Post";
+import { UserRole } from "./enums/user-roles.enum";
+import { Post } from "./post.entity";
+import { IUser } from "./models/user.interface";
 
 @Entity("users")
 @Index("idx_user_email", ["email"], { unique: true })
-export class User {
+export class User implements IUser{
     
   @PrimaryGeneratedColumn("increment", { type: "bigint" })
-  id: bigint;
+  id: number;
 
   @Column({ type: "varchar", length: 200 })
   name: string;

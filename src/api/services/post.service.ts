@@ -10,7 +10,7 @@ export class PostService {
         ) {}
 
    async create(dto: CreatePostDTO): Promise<IPost> {
-    //se for usar realmente a propriedade author: user, criar um dto para não retornar alguns dados como senha
+    // se for usar realmente a propriedade author: user, criar um dto para não retornar alguns dados como senha
     const author = await this.userRepository.findById(dto.authorId); 
     if (!author) {
         throw new Error("Author not found");
@@ -41,5 +41,27 @@ export class PostService {
 
    async findById(id: number): Promise<IPost | null> {
     return this.repository.findActiveById(id)
+   }
+
+   async findAll(page: number = 1, limit: number = 10): Promise<{ post: IPost[]; total: number }> {
+    return this.repository.findAllActive(page, limit);
+
+   }
+
+   async search(keyword: string): Promise<IPost[]> {
+    return this.repository.searchByKeyword(keyword);
+
+   }
+
+   async update(id: number, data: Partial<IPost>): Promise<IPost | null> {
+    return this.repository.update(id, data);
+   }
+
+   async remove(id: number): Promise<void> {
+    const post = await this.repository.findActiveById(id);
+    if (!post) {
+        throw new Error ("Post not found");
+    }
+    await this.repository.softDelete(id);
    }
 }

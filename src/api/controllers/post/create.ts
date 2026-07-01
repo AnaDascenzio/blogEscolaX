@@ -8,7 +8,7 @@ export async function create(req: Request, res: Response, next: NextFunction) {
     try {
         const post = createPostSchema.parse(req.body);
 
-        //TODO atribuir isso pra uma factory
+        // TODO atribuir isso pra uma factory
         const userRepository = new UserRepository()
         const postRepository = new PostRepository()
         const postService = new PostService(postRepository, userRepository)

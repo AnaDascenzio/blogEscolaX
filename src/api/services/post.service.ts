@@ -10,7 +10,7 @@ export class PostService {
         ) {}
 
    async create(dto: CreatePostDTO): Promise<IPost> {
-    //se for usar realmente a propriedade author: user, criar um dto para não retornar alguns dados como senha
+    // se for usar realmente a propriedade author: user, criar um dto para não retornar alguns dados como senha
     const author = await this.userRepository.findById(dto.authorId); 
     if (!author) {
         throw new Error("Author not found");

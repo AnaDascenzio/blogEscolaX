@@ -25,7 +25,7 @@ export class PostRepository implements IPostRepository {
 
   async findActiveById(id: number): Promise<IPost | null> {
     return this.repository.findOne({
-      where: { id: id , isDeleted: false },
+      where: { id , isDeleted: false },
       relations: { author: true },
     })
   }
@@ -58,6 +58,6 @@ export class PostRepository implements IPostRepository {
   }
 
   async softDelete(id: number): Promise<void> {
-    await this.repository.update({ id: id }, { isDeleted: true })
+    await this.repository.update({ id }, { isDeleted: true })
   }
 }

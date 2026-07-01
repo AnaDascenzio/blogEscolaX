@@ -6,7 +6,7 @@ export async function findById(req: Request, res: Response, next: NextFunction) 
     try {
         const id = Number(req.params.id);
 
-        //TODO atribuir isso pra uma factory
+        // TODO atribuir isso pra uma factory
         const userRepository = new UserRepository()
         const userService = new UserService(userRepository)
         const user = await userService.findById(id);

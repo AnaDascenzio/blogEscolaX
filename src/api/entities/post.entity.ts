@@ -39,7 +39,7 @@ export class Post implements IPost{
   @Column({ type: "enum", enum: Subject })
   subject: Subject;
 
-  //verificar necessidade
+  // verificar necessidade
   @Column({ type: "bigint" })
   authorId: number;
 

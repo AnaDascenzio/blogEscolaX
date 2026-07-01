@@ -3,7 +3,7 @@ import { appDataSource } from '../../lib/typeorm/typeorm';
 import { User } from '../entities/user.entity';
 import { IUser } from '../entities/models/user.interface';
 
-//TODO usar interface
+// TODO usar interface
 export class UserRepository {
 
   private repository: Repository<User>
@@ -21,7 +21,7 @@ export class UserRepository {
     }
 
     async findById(id: number): Promise<IUser | null> {
-        return this.repository.findOne({ where: { id: id , status: true } });
+        return this.repository.findOne({ where: { id , status: true } });
     }
 
     async create(user: IUser): Promise<IUser> {

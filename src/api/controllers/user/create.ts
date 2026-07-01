@@ -7,7 +7,7 @@ export async function create(req: Request, res: Response, next: NextFunction) {
     try {
         const user = createUserSchema.parse(req.body);
 
-        //TODO atribuir isso pra uma factory
+        // TODO atribuir isso pra uma factory
         const userRepository = new UserRepository()
         const userService = new UserService(userRepository)
         const createdUser = await userService.create(user);

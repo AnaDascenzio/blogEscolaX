@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Subject } from "../api/entities/enums/subject.enum";
+import { Subject } from "../../api/entities/enums/subject.enum";
 
 export const createPostSchema = z.object({
     title: z.string(),

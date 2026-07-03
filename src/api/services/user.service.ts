@@ -1,6 +1,6 @@
 import { IUser } from "../entities/models/user.interface";
 import { IUserRepository } from "../repositories/interfaces/user.repository.interface";
-import { CreateUserDTO } from "../../dtos/create-user.dto";
+import { CreateUserDTO } from "../../dtos/user/create-user.dto";
 import { UserRole } from "../entities/enums/user-roles.enum";
 
 export class UserService {
@@ -9,7 +9,7 @@ export class UserService {
          private readonly repository: IUserRepository
     ) {}
 
-    async create(dto: CreateUserDTO): Promise<IUser> {
+    async create(dto: CreateUserDTO): Promise<number | undefined> {
         const emailAlreadyExists = await this.repository.findByEmail(dto.email);
 
         if (emailAlreadyExists) {
@@ -18,13 +18,12 @@ export class UserService {
 
         const user: IUser = {
         ...dto,
-        role: UserRole.STUDENT,
         status: true,
         createdAt: new Date(),
         updatedAt: new Date()
     };
 
-    return this.repository.create(user);
+    return this.repository.create(user).then((createdUser) => createdUser.id);
     }
 
     async findById (id: number): Promise<IUser | null> {

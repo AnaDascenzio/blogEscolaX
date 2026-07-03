@@ -48,14 +48,16 @@ export class PostRepository implements IPostRepository {
   }
 
   async update(id: number, data: Partial<IPost>): Promise<IPost | null> {
-    const post = await this.repository.findOne({ where: { id } })
-    if (!post) {
-      return null
-    }
-
-    Object.assign(post, data)
-    return this.repository.save(post)
+  const post = await this.repository.findOne({ where: { id, isDeleted: false } })
+  if (!post) {
+    return null
   }
+
+  const { title, content, summary, imageUrl, link, subject } = data
+  Object.assign(post, { title, content, summary, imageUrl, link, subject })
+  
+  return this.repository.save(post)
+}
 
   async softDelete(id: number): Promise<void> {
     await this.repository.update({ id }, { isDeleted: true })

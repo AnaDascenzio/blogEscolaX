@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { createUserSchema } from "../../../dtos/create-user.dto";
+import { createUserSchema } from "../../../dtos/user/create-user.dto";
 import { UserRepository } from "../../repositories/user.repository";
 import { UserService } from "../../services/user.service";
 

@@ -26,7 +26,6 @@ export class PostRepository implements IPostRepository {
   async findActiveById(id: number): Promise<IPost | null> {
     return this.repository.findOne({
       where: { id , isDeleted: false },
-      relations: { author: true },
     })
   }
 

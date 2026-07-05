@@ -1,11 +1,12 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import z from "zod";
 import jwt from "jsonwebtoken";
 import { UserRepository } from "../../repositories/user.repository";
 import { UserService } from "../../services/user.service";
 import { compare } from "bcryptjs";
 
-export async function signin(req: Request, res: Response, next: NextFunction) {
+export async function signin(req: Request, res: Response
+) {
     const registerBodySchema = z.object({
         email: z.string().email(),
         password: z.string()

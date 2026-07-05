@@ -16,7 +16,7 @@ export async function findById(req: Request, res: Response, next: NextFunction) 
             return res.status(404).json({ message: "User not found" });
         }
 
-        return res.status(201).json(mapUserToResponseDTO(user));
+        return res.status(200).json(mapUserToResponseDTO(user));
     } catch (error) {
         next(error);
     }

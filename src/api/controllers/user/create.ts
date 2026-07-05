@@ -3,6 +3,7 @@ import { hash } from 'bcryptjs'
 import { createUserSchema } from "../../../dtos/user/create-user.dto";
 import { UserRepository } from "../../repositories/user.repository";
 import { UserService } from "../../services/user.service";
+import { mapUserToResponseDTO } from "../../mappers/user.mapper";
 
 export async function create(req: Request, res: Response, next: NextFunction) {
     try {
@@ -16,7 +17,7 @@ export async function create(req: Request, res: Response, next: NextFunction) {
         const userService = new UserService(userRepository)
         const createdUser = await userService.create(user);
 
-        return res.status(201).json(createdUser);
+        return res.status(201).json(mapUserToResponseDTO(createdUser));
     } catch (error) {
         next(error);
     }

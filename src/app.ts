@@ -1,5 +1,6 @@
 import 'reflect-metadata'
 import './lib/typeorm/typeorm'
+import 'jsonwebtoken'
 import express from 'express';
 import userRouter from './api/controllers/user/route';
 import postRouter from './api/controllers/post/route';

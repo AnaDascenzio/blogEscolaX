@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { UserRepository } from "../../repositories/user.repository";
 import { UserService } from "../../services/user.service";
+import { mapUserToResponseDTO } from "../../mappers/user.mapper";
 
 export async function findByName(req: Request, res: Response, next: NextFunction) {
     try {
@@ -11,7 +12,11 @@ export async function findByName(req: Request, res: Response, next: NextFunction
         const userService = new UserService(userRepository)
         const user = await userService.findByName(name);
 
-        return res.status(201).json(user);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        return res.status(201).json(mapUserToResponseDTO(user));
     } catch (error) {
         next(error);
     }

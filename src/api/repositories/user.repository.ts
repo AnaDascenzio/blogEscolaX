@@ -21,7 +21,10 @@ export class UserRepository {
     }
 
     async findById(id: number): Promise<IUser | null> {
-        return this.repository.findOne({ where: { id , status: true } });
+    return this.repository.findOne({
+        where: { id, status: true },
+        relations: { posts: true },
+    });
     }
 
     async create(user: IUser): Promise<IUser> {

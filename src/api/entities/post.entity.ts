@@ -51,7 +51,7 @@ export class Post implements IPost{
     nullable: false
   })
   @JoinColumn({ name: "authorId" })
-  author: User;
+  author?: User;
 
   @CreateDateColumn()
   createdAt: Date;

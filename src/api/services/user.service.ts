@@ -1,6 +1,6 @@
 import { IUser } from "../entities/models/user.interface";
 import { IUserRepository } from "../repositories/interfaces/user.repository.interface";
-import { CreateUserDTO } from "../../dtos/create-user.dto";
+import { CreateUserDTO } from "../../dtos/user/create-user.dto";
 import { UserRole } from "../entities/enums/user-roles.enum";
 
 export class UserService {
@@ -13,7 +13,7 @@ export class UserService {
         const emailAlreadyExists = await this.repository.findByEmail(dto.email);
 
         if (emailAlreadyExists) {
-            throw new Error("E-mail já cadastrado.");
+            throw new Error("E-mail jรก cadastrado.");
         }
 
         const user: IUser = {

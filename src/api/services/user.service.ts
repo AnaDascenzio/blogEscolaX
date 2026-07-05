@@ -30,4 +30,12 @@ export class UserService {
     async findById (id: number): Promise<IUser | null> {
         return this.repository.findById(id)
     }
+
+    async findByEmail (email: string): Promise<IUser | null> {
+        return this.repository.findByEmail(email)
+    }
+
+    async findByName (name: string): Promise<IUser | null> {
+        return this.repository.findByName(name)
+    }
 }

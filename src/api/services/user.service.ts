@@ -18,7 +18,7 @@ export class UserService {
 
         const user: IUser = {
         ...dto,
-        role: UserRole.STUDENT,
+        role: dto.role || UserRole.STUDENT,
         status: true,
         createdAt: new Date(),
         updatedAt: new Date()

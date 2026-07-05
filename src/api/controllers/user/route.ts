@@ -7,8 +7,8 @@ import { findByName } from "./find-by-name";
 const userRouter = Router();
 
 userRouter.post("/", create);
-userRouter.get("/:id", findById);
 userRouter.get("/email/:email", findByEmail);
 userRouter.get("/name/:name", findByName);
+userRouter.get("/:id", findById);
 
 export default userRouter;

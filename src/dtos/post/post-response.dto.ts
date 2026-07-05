@@ -10,6 +10,6 @@ export interface PostResponseDTO {
   subject: Subject;
   authorId: number;
   isDeleted: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

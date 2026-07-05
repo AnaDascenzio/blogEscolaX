@@ -18,9 +18,8 @@ export class UserService {
         const user: IUser = {
         ...dto,
         status: true,
-        createdAt: new Date(),
-        updatedAt: new Date()
-    };
+        createdAt: new Date()
+        };
 
     return this.repository.create(user).then((createdUser) => createdUser.id);
     }

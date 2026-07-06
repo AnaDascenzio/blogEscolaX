@@ -13,7 +13,7 @@ export class UserService {
         const emailAlreadyExists = await this.repository.findByEmail(dto.email);
 
         if (emailAlreadyExists) {
-            throw new Error("E-mail jรก cadastrado.");
+            throw new Error("E-mail já cadastrado.");
         }
 
         const user: IUser = {
@@ -37,5 +37,15 @@ export class UserService {
 
     async findByName (name: string): Promise<IUser | null> {
         return this.repository.findByName(name)
+    }
+
+    async update(id: number, data: Partial<IUser>): Promise<IUser | null> {
+    const user = await this.repository.findById(id);
+
+    if (!user) {
+        throw new Error("Usuário não encontrado.");
+    }
+
+    return this.repository.update(id, data);
     }
 }

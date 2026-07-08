@@ -5,12 +5,12 @@ on:
     branches:
       - main
       - develop
-
+      - feat-testes-unitarios 
   pull_request:
     branches:
       - main
       - develop
-
+      - feat-testes-unitarios 
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -32,6 +32,9 @@ jobs:
 
       - name: Type Check
         run: npm run typecheck
+
+      - name: Executar Testes Unitários e Cobertura
+        run: npx jest --coverage
 
       - name: Build TypeScript
         run: npm run build

@@ -31,7 +31,7 @@ describe("PostService", () => {
       const dto: CreatePostDTO = {
         title: "Título de Teste",
         content: "Conteúdo pedagógico",
-        subject: "Matemática",
+        subject: "Matemática" as any,
         authorId: 1,
         summary: "Resumo do post",
         imageUrl: "http://imagem.com",
@@ -39,10 +39,10 @@ describe("PostService", () => {
       };
 
       const mockAuthor = { id: 1, name: "Professor Teste", email: "prof@escola.com" };
-      const mockSavedPost: IPost = { id: 10, ...dto, isDeleted: false, createdAt: new Date(), updatedAt: new Date() };
+      const mockSavedPost = { id: 10, ...dto, isDeleted: false, createdAt: new Date(), updatedAt: new Date() };
 
-      mockUserRepository.findById.mockResolvedValue(mockAuthor);
-      mockPostRepository.create.mockResolvedValue(mockSavedPost);
+      mockUserRepository.findById.mockResolvedValue(mockAuthor as any);
+      mockPostRepository.create.mockResolvedValue(mockSavedPost as any);
 
       const result = await postService.create(dto);
 
@@ -52,7 +52,7 @@ describe("PostService", () => {
     });
 
     it("deve lançar um erro se o autor não for encontrado", async () => {
-      const dto: CreatePostDTO = { title: "A", content: "B", subject: "C", authorId: 99 };
+      const dto: CreatePostDTO = { title: "A", content: "B", subject: "C" as any, authorId: 99 };
       mockUserRepository.findById.mockResolvedValue(null);
 
       await expect(postService.create(dto)).rejects.toThrow("Author not found");
@@ -62,15 +62,15 @@ describe("PostService", () => {
       const dto: CreatePostDTO = {
         title: "Título Sem Opcionais",
         content: "Conteúdo",
-        subject: "História",
+        subject: "História" as any,
         authorId: 1
       };
 
       const mockAuthor = { id: 1, name: "Professor Teste", email: "prof@escola.com" };
-      const mockSavedPost: IPost = { id: 11, ...dto, isDeleted: false, createdAt: new Date(), updatedAt: new Date() };
+      const mockSavedPost = { id: 11, ...dto, isDeleted: false, createdAt: new Date(), updatedAt: new Date() };
 
-      mockUserRepository.findById.mockResolvedValue(mockAuthor);
-      mockPostRepository.create.mockResolvedValue(mockSavedPost);
+      mockUserRepository.findById.mockResolvedValue(mockAuthor as any);
+      mockPostRepository.create.mockResolvedValue(mockSavedPost as any);
 
       const result = await postService.create(dto);
 
@@ -82,8 +82,8 @@ describe("PostService", () => {
 
   describe("findById", () => {
     it("deve retornar um post ativo pelo ID", async () => {
-      const mockPost: IPost = { id: 1, title: "A", content: "B", subject: "C", authorId: 1, isDeleted: false, createdAt: new Date(), updatedAt: new Date() };
-      mockPostRepository.findActiveById.mockResolvedValue(mockPost);
+      const mockPost = { id: 1, title: "A", content: "B", subject: "C" as any, authorId: 1, isDeleted: false, createdAt: new Date(), updatedAt: new Date() };
+      mockPostRepository.findActiveById.mockResolvedValue(mockPost as any);
 
       const result = await postService.findById(1);
       expect(result).toEqual(mockPost);
@@ -93,7 +93,7 @@ describe("PostService", () => {
   describe("findAll", () => {
     it("deve retornar uma lista paginada de posts ativos", async () => {
       const mockResult = { post: [], total: 0 };
-      mockPostRepository.findAllActive.mockResolvedValue(mockResult);
+      mockPostRepository.findAllActive.mockResolvedValue(mockResult as any);
 
       const result = await postService.findAll(1, 10);
       expect(result).toEqual(mockResult);
@@ -112,8 +112,8 @@ describe("PostService", () => {
 
   describe("update", () => {
     it("deve atualizar um post com sucesso", async () => {
-      const mockUpdatedPost: IPost = { id: 1, title: "Novo Título", content: "B", subject: "C", authorId: 1, isDeleted: false, createdAt: new Date(), updatedAt: new Date() };
-      mockPostRepository.update.mockResolvedValue(mockUpdatedPost);
+      const mockUpdatedPost = { id: 1, title: "Novo Título", content: "B", subject: "C" as any, authorId: 1, isDeleted: false, createdAt: new Date(), updatedAt: new Date() };
+      mockPostRepository.update.mockResolvedValue(mockUpdatedPost as any);
 
       const result = await postService.update(1, { title: "Novo Título" });
       expect(result).toEqual(mockUpdatedPost);
@@ -122,8 +122,8 @@ describe("PostService", () => {
 
   describe("remove", () => {
     it("deve efetuar soft delete se o post existir", async () => {
-      const mockPost: IPost = { id: 1, title: "A", content: "B", subject: "C", authorId: 1, isDeleted: false, createdAt: new Date(), updatedAt: new Date() };
-      mockPostRepository.findActiveById.mockResolvedValue(mockPost);
+      const mockPost = { id: 1, title: "A", content: "B", subject: "C" as any, authorId: 1, isDeleted: false, createdAt: new Date(), updatedAt: new Date() };
+      mockPostRepository.findActiveById.mockResolvedValue(mockPost as any);
       mockPostRepository.softDelete.mockResolvedValue(undefined);
 
       await postService.remove(1);

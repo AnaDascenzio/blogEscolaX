@@ -120,13 +120,14 @@ A API estará disponível em `http://localhost:3000`.
 
 ### Users
 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| POST | /users | Cria novo usuário |
-| GET | /users/:id | Busca usuário por ID |
-| GET | /users/email/:email | Busca usuário por e-mail |
-| GET | /users/name/:name | Busca usuário por nome |
-| PUT | /users/:id | Atualiza usuário |
+| Método | Rota | Descrição | Autenticação |
+|--------|------|-----------|--------------|
+| POST | /users | Cria novo usuário | Pública |
+| POST | /users/signin | Realiza login e gera token JWT | Pública |
+| GET | /users/:id | Busca usuário por ID | Pública |
+| GET | /users/email/:email | Busca usuário por e-mail | Pública |
+| GET | /users/name/:name | Busca usuário por nome | Pública |
+| PUT | /users/:id | Atualiza usuário | Pública |
 
 ### Exemplo de requisição — Criar Post
 
@@ -160,10 +161,12 @@ Content-Type: application/json
 
 ## 🧪 Testes
 
-O projeto utiliza **Jest** com **ts-jest** para testes unitários, garantindo no mínimo 20% de cobertura de código conforme exigido pelo Tech Challenge.
+O projeto utiliza **Jest** com **ts-jest** para testes unitários, com a exibição detalhada de cada caso configurada e cobertura de código expandida para cobrir toda a camada de serviços e roteamento (controladores).
 
 ### Cobertura atual
-- `PostService` — 100% de cobertura (Statements, Branches, Functions, Lines)
+- **Serviços (`PostService`)** — 100% de cobertura (Statements, Branches, Functions, Lines)
+- **Controladores de Usuários** — Cobertura completa de rotas (`create`, `signin`, `findById`, `findByEmail`, `findByName`, `update`)
+- **Controladores de Posts** — Cobertura completa de rotas (`create`, `findById`, `findAll`, `search`, `update`, `delete`)
 
 ### Como rodar
 
@@ -171,11 +174,11 @@ O projeto utiliza **Jest** com **ts-jest** para testes unitários, garantindo no
 # Instalar dependências
 npm install
 
-# Rodar testes unitários
-npx jest
+# Rodar todos os testes unitários (modo detalhado/verbose)
+npm test
 
-# Rodar com relatório de cobertura
-npx jest --coverage
+# Rodar com relatório de cobertura de código
+npm run test:cov
 ```
 
 ---

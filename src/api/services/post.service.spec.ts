@@ -157,7 +157,7 @@ describe("PostService", () => {
       const mockUpdatedPost: IPost = { id: 1, title: "Novo Título", content: "B", subject: Subject.MATHEMATICS, authorId: 1, isDeleted: false, createdAt: new Date(), updatedAt: new Date() };
       mockPostRepository.update.mockResolvedValue(mockUpdatedPost);
 
-      const result = await postService.update(1, { title: "Novo Título" });
+      const result = await postService.update(1, { title: "Novo Título", content: "B", subject: Subject.MATHEMATICS, authorId: 1 });
       expect(result).toEqual(mockUpdatedPost);
     });
   });

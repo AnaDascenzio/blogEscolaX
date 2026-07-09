@@ -1,7 +1,6 @@
 import { IUser } from "../entities/models/user.interface";
 import { IUserRepository } from "../repositories/interfaces/user.repository.interface";
 import { CreateUserDTO } from "../../dtos/user/create-user.dto";
-import { UserRole } from "../entities/enums/user-roles.enum";
 
 export class UserService {
 

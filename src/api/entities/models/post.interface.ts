@@ -12,6 +12,6 @@ export interface IPost {
   authorId: number;
   isDeleted: boolean;
   author?: IUser;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

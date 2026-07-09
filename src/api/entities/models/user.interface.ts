@@ -8,7 +8,7 @@ export interface IUser {
   password: string;
   role: UserRole;
   status: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   posts?: IPost[];
 }

@@ -45,7 +45,7 @@ describe("Post Controller - create", () => {
 
     mockReq = { 
         body: postData,
-        user: { id: 1 } as any 
+        user: { id: 1 } as NonNullable<Request["user"]> 
     };
 
     const mockSavedPost: IPost = {
@@ -78,7 +78,7 @@ describe("Post Controller - create", () => {
     
     mockReq = { 
       body: validBody,
-      user: { id: 1 } as any
+      user: { id: 1 } as NonNullable<Request["user"]>
     };
     
     const serviceError = new Error("Author not found");

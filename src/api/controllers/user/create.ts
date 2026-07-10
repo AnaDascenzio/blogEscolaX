@@ -20,7 +20,7 @@ export async function create(req: Request, res: Response, next: NextFunction) {
         const userRepository = new UserRepository();
         const userService = new UserService(userRepository);
         
-        const createdUser = await userService.create(userData as any);
+        const createdUser = await userService.create(userData as Parameters<UserService["create"]>[0]);
 
         return res.status(201).json(mapUserToResponseDTO(createdUser));
     } catch (error) {

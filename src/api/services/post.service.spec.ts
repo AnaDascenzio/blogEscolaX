@@ -242,7 +242,7 @@ describe("PostService", () => {
       mockPostRepository.findActiveById.mockResolvedValue(existingPost);
       mockPostRepository.update.mockResolvedValue(mockUpdatedPost);
 
-      const result = await postService.update(postId, dto as any);
+    const result = await postService.update(postId, dto as unknown as Parameters<PostService["update"]>[1]);
       
       expect(mockPostRepository.findActiveById).toHaveBeenCalledWith(postId);
       expect(result).toEqual(mockUpdatedPost);
@@ -251,7 +251,7 @@ describe("PostService", () => {
     it("deve retornar null se o post não existir ao tentar atualizar", async () => {
       mockPostRepository.findActiveById.mockResolvedValue(null);
 
-      const result = await postService.update(999, {} as any);
+    const result = await postService.update(999, {} as unknown as Parameters<PostService["update"]>[1]);
       
       expect(result).toBeNull();
       expect(mockPostRepository.update).not.toHaveBeenCalled();

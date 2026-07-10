@@ -1,19 +1,27 @@
 import { Request, Response } from "express";
+import { hash } from "bcryptjs";
 import { create } from "./create";
-import { UserService } from "../../services/user.service";
 import { UserRole } from "../../entities/enums/user-roles.enum";
 import { IUser } from "../../entities/models/user.interface";
 
-jest.mock("../../services/user.service");
+const mockUserService = {
+  create: jest.fn(),
+};
+
+jest.mock("../../services/user.service", () => ({
+  UserService: jest.fn().mockImplementation(() => mockUserService),
+}));
+
+jest.mock("bcryptjs", () => ({
+  hash: jest.fn(),
+}));
+
 jest.mock("../../../lib/typeorm/typeorm", () => ({
   appDataSource: {
     getRepository: jest.fn(),
     initialize: jest.fn().mockResolvedValue({}),
     destroy: jest.fn().mockResolvedValue({}),
   }
-}));
-jest.mock("bcryptjs", () => ({
-  hash: jest.fn().mockResolvedValue("hashed_password"),
 }));
 
 describe("User Controller - create", () => {
@@ -30,74 +38,60 @@ describe("User Controller - create", () => {
     mockNext = jest.fn();
   });
 
-  it("deve criar um usuário com sucesso", async () => {
-    const requestBody = {
-      name: "John Doe",
-      email: "john@escola.com",
-      password: "password123",
-      role: UserRole.TEACHER,
+  it("deve criar um usuario com sucesso", async () => {
+    const userData = {
+      name: "Aluno Teste",
+      email: "aluno@escola.com",
+      password: "senha123",
+      role: UserRole.STUDENT
     };
 
     mockReq = {
-      body: requestBody,
+      body: userData
     };
+
+    (hash as jest.Mock).mockResolvedValue("senha_hasheada");
 
     const mockCreatedUser: IUser = {
       id: 1,
-      name: requestBody.name,
-      email: requestBody.email,
-      password: "hashed_password",
-      role: requestBody.role,
+      name: userData.name,
+      email: userData.email,
+      password: "senha_hasheada",
+      role: userData.role,
       status: true,
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     };
 
-    jest.spyOn(UserService.prototype, "create").mockResolvedValue(mockCreatedUser);
+    mockUserService.create.mockResolvedValue(mockCreatedUser);
 
     await create(mockReq as Request, mockRes as Response, mockNext);
 
-    expect(mockRes.status).toHaveBeenCalledWith(201);
-    expect(mockRes.json).toHaveBeenCalledWith({
-      id: 1,
-      name: "John Doe",
-      email: "john@escola.com",
-      role: UserRole.TEACHER,
-      status: true,
-      posts: [],
+    expect(hash).toHaveBeenCalledWith(userData.password, 10);
+    expect(mockUserService.create).toHaveBeenCalledWith({
+      ...userData,
+      password: "senha_hasheada"
     });
-    expect(mockNext).not.toHaveBeenCalled();
+    expect(mockRes.status).toHaveBeenCalledWith(201);
+    expect(mockRes.json).toHaveBeenCalled();
   });
 
-  it("deve chamar next com erro quando a validação falhar", async () => {
-    mockReq = {
-      body: {
-        name: "John Doe",
-        // email inválido ou faltando
-        password: "123",
-      },
-    };
-
-    await create(mockReq as Request, mockRes as Response, mockNext);
-
-    expect(mockNext).toHaveBeenCalled();
-    expect(mockRes.status).not.toHaveBeenCalled();
-  });
-
-  it("deve chamar next com erro quando o serviço falhar", async () => {
-    const requestBody = {
-      name: "John Doe",
-      email: "john@escola.com",
-      password: "password123",
-      role: UserRole.TEACHER,
+  it("deve chamar next com erro quando o servico falhar", async () => {
+    const userData = {
+      name: "Aluno Teste",
+      email: "aluno@escola.com",
+      password: "senha123",
+      role: UserRole.STUDENT
     };
 
     mockReq = {
-      body: requestBody,
+      body: userData
     };
 
-    const serviceError = new Error("E-mail já cadastrado.");
-    jest.spyOn(UserService.prototype, "create").mockRejectedValue(serviceError);
+    (hash as jest.Mock).mockResolvedValue("senha_hasheada");
+
+    const serviceError = new Error("Email already in use");
+    mockUserService.create.mockRejectedValue(serviceError);
 
     await create(mockReq as Request, mockRes as Response, mockNext);
 

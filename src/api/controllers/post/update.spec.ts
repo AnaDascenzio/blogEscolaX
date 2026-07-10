@@ -4,7 +4,14 @@ import { PostService } from "../../services/post.service";
 import { Subject } from "../../entities/enums/subject.enum";
 import { IPost } from "../../entities/models/post.interface";
 
-jest.mock("../../services/post.service");
+const mockPostService = {
+  update: jest.fn(),
+};
+
+jest.mock("../../services/post.service", () => ({
+  PostService: jest.fn().mockImplementation(() => mockPostService),
+}));
+
 jest.mock("../../../lib/typeorm/typeorm", () => ({
   appDataSource: {
     getRepository: jest.fn(),
@@ -42,22 +49,31 @@ describe("Post Controller - update", () => {
 
     const mockUpdatedPost: IPost = {
       id: 1,
-      title: requestBody.title,
-      content: requestBody.content,
-      subject: requestBody.subject,
-      authorId: requestBody.authorId,
+      ...requestBody,
       isDeleted: false,
       createdAt: new Date(),
       updatedAt: new Date()
-    };
+    } as IPost;
 
-    jest.spyOn(PostService.prototype, "update").mockResolvedValue(mockUpdatedPost);
+    mockPostService.update.mockResolvedValue(mockUpdatedPost);
 
     await update(mockReq as Request, mockRes as Response, mockNext);
 
-    expect(PostService.prototype.update).toHaveBeenCalledWith(1, requestBody);
+
+    expect(mockPostService.update).toHaveBeenCalledWith(
+      1, 
+      expect.objectContaining({
+        title: "Título de Teste Atualizado",
+        content: "Conteúdo pedagógico atualizado",
+        subject: Subject.MATHEMATICS
+      })
+    );
+    
     expect(mockRes.status).toHaveBeenCalledWith(200);
-    expect(mockRes.json).toHaveBeenCalledWith(mockUpdatedPost);
+    expect(mockRes.json).toHaveBeenCalledWith(expect.objectContaining({
+      title: "Título de Teste Atualizado",
+      content: "Conteúdo pedagógico atualizado"
+    }));
     expect(mockNext).not.toHaveBeenCalled();
   });
 
@@ -72,7 +88,7 @@ describe("Post Controller - update", () => {
       },
     };
 
-    jest.spyOn(PostService.prototype, "update").mockResolvedValue(null);
+    mockPostService.update.mockResolvedValue(null);
 
     await update(mockReq as Request, mockRes as Response, mockNext);
 

@@ -115,7 +115,7 @@ A API estará disponível em `http://localhost:3000`.
 | GET | /posts/:id | Busca post por ID | Pública |
 | GET | /posts/search?keyword= | Busca por palavra-chave | Pública |
 | POST | /posts | Cria novo post | Teacher |
-| PUT | /posts/:id | Edita post | Teacher |
+| PATCH | /posts/:id | Edita post | Teacher |
 | DELETE | /posts/:id | Remove post (soft delete) | Teacher |
 
 ### Users

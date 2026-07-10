@@ -12,16 +12,17 @@ export class PostRepository implements IPostRepository {
   }
 
   async findAllActive(page: number = 1, limit: number = 10): Promise<{ post: IPost[], total: number }> {
-    const [post, total] = await this.repository.findAndCount({
-      where: { isDeleted: false },
-      relations: { author: true },
-      order: { createdAt: 'DESC' },
-      skip: (page - 1) * limit,
-      take: limit,
-    })
+  const queryBuilder = this.repository.createQueryBuilder('post')
+    .leftJoinAndSelect('post.author', 'author') // Faz o JOIN explícito
+    .where('post.isDeleted = :isDeleted', { isDeleted: false })
+    .orderBy('post.createdAt', 'DESC')
+    .skip((page - 1) * limit)
+    .take(limit);
 
-    return { post, total }
-  }
+  const [post, total] = await queryBuilder.getManyAndCount();
+
+  return { post, total };
+}
 
   async findActiveById(id: number): Promise<IPost | null> {
     return this.repository.findOne({

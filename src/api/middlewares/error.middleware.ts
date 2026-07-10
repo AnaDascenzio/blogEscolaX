@@ -5,7 +5,7 @@ export function errorMiddleware(
   error: Error,
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) {
 
   if (error instanceof ZodError) {

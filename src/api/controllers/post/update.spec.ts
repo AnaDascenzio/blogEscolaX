@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { update } from "./update";
-import { PostService } from "../../services/post.service";
 import { Subject } from "../../entities/enums/subject.enum";
 import { IPost } from "../../entities/models/post.interface";
 

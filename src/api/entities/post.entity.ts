@@ -13,10 +13,10 @@ import { User } from "./user.entity";
 import { IPost } from "./models/post.interface";
 
 @Entity("posts")
-@Index("idx_post_author", ["authorId"])
+@Index("idx_post_author", ["authorId"]) // O índice ainda pode apontar para a coluna do banco
 @Index("idx_post_subject", ["subject"])
 @Index("idx_post_created_at", ["createdAt"])
-export class Post implements IPost{
+export class Post implements IPost {
 
   @PrimaryGeneratedColumn("increment", { type: "bigint" })
   id: number;
@@ -39,19 +39,20 @@ export class Post implements IPost{
   @Column({ type: "enum", enum: Subject })
   subject: Subject;
 
-  // verificar necessidade
+  // Mantemos o authorId como coluna para facilitar buscas rápidas e filtros
   @Column({ type: "bigint" })
   authorId: number;
 
-  @Column({ type: "boolean", default: false})
+  @Column({ type: "boolean", default: false })
   isDeleted: boolean;
 
+  // A relação usa o JoinColumn para se ligar à coluna authorId já definida acima
   @ManyToOne(() => User, (user) => user.posts, {
     onDelete: "CASCADE",
     nullable: false
   })
   @JoinColumn({ name: "authorId" })
-  author?: User;
+  author: User;
 
   @CreateDateColumn()
   createdAt: Date;

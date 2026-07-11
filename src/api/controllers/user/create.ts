@@ -7,15 +7,20 @@ import { mapUserToResponseDTO } from "../../mappers/user.mapper";
 
 export async function create(req: Request, res: Response, next: NextFunction) {
     try {
-        const user = createUserSchema.parse(req.body);
+        const validatedData = createUserSchema.parse(req.body);
 
-        const hashedPassword = await hash(user.password, 10);
-        user.password = hashedPassword;
+        const hashedPassword = await hash(validatedData.password, 10);
+        
+        const userData = {
+            ...validatedData,
+            password: hashedPassword,
+            role: validatedData.role
+        };
 
-        // TODO atribuir isso pra uma factory
-        const userRepository = new UserRepository()
-        const userService = new UserService(userRepository)
-        const createdUser = await userService.create(user);
+        const userRepository = new UserRepository();
+        const userService = new UserService(userRepository);
+        
+        const createdUser = await userService.create(userData as Parameters<UserService["create"]>[0]);
 
         return res.status(201).json(mapUserToResponseDTO(createdUser));
     } catch (error) {

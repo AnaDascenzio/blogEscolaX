@@ -7,7 +7,6 @@ export const createPostSchema = z.object({
     summary: z.string().optional(),
     imageUrl: z.string().optional(),
     link: z.string().optional(),
-    authorId: z.number(),
     subject: z.enum(Subject)
 
 });

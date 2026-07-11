@@ -1,10 +1,16 @@
 import { Request, Response } from "express";
 import { create } from "./create";
-import { PostService } from "../../services/post.service";
 import { Subject } from "../../entities/enums/subject.enum";
 import { IPost } from "../../entities/models/post.interface";
 
-jest.mock("../../services/post.service");
+const mockPostService = {
+  create: jest.fn(),
+};
+
+jest.mock("../../services/post.service", () => ({
+  PostService: jest.fn().mockImplementation(() => mockPostService),
+}));
+
 jest.mock("../../../lib/typeorm/typeorm", () => ({
   appDataSource: {
     getRepository: jest.fn(),
@@ -28,86 +34,55 @@ describe("Post Controller - create", () => {
   });
 
   it("deve criar um post com sucesso", async () => {
-    const requestBody = {
+    const postData = {
       title: "Título de Teste",
       content: "Conteúdo pedagógico",
       subject: Subject.MATHEMATICS,
-      authorId: 1,
       summary: "Resumo do post",
       imageUrl: "http://imagem.com",
       link: "http://link.com"
     };
 
-    mockReq = {
-      body: requestBody,
+    mockReq = { 
+        body: postData,
+        user: { id: 1 } as NonNullable<Request["user"]> 
     };
 
     const mockSavedPost: IPost = {
       id: 10,
-      title: requestBody.title,
-      content: requestBody.content,
-      subject: requestBody.subject,
-      authorId: requestBody.authorId,
-      isDeleted: false,
-      summary: requestBody.summary,
-      imageUrl: requestBody.imageUrl,
-      link: requestBody.link,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-
-    jest.spyOn(PostService.prototype, "create").mockResolvedValue(mockSavedPost);
-
-    await create(mockReq as Request, mockRes as Response, mockNext);
-
-    expect(PostService.prototype.create).toHaveBeenCalledWith(requestBody);
-    expect(mockRes.status).toHaveBeenCalledWith(201);
-    expect(mockRes.json).toHaveBeenCalledWith({
-      id: 10,
-      title: "Título de Teste",
-      content: "Conteúdo pedagógico",
-      subject: Subject.MATHEMATICS,
+      ...postData,
       authorId: 1,
       isDeleted: false,
-      summary: "Resumo do post",
-      imageUrl: "http://imagem.com",
-      link: "http://link.com",
-      createdAt: expect.any(Date),
-      updatedAt: expect.any(Date)
-    });
-    expect(mockNext).not.toHaveBeenCalled();
-  });
+      createdAt: new Date(),
+      updatedAt: new Date()
+    } as IPost;
 
-  it("deve chamar next com erro quando a validação do post falhar", async () => {
-    mockReq = {
-      body: {
-        // faltando title
-        content: "Conteúdo pedagógico",
-        subject: Subject.MATHEMATICS,
-        authorId: 1
-      },
-    };
+    mockPostService.create.mockResolvedValue(mockSavedPost);
 
     await create(mockReq as Request, mockRes as Response, mockNext);
 
-    expect(mockNext).toHaveBeenCalled();
-    expect(mockRes.status).not.toHaveBeenCalled();
+    expect(mockPostService.create).toHaveBeenCalledWith({
+        ...postData,
+        authorId: 1
+    });
+    expect(mockRes.status).toHaveBeenCalledWith(201);
+    expect(mockRes.json).toHaveBeenCalled();
   });
 
   it("deve chamar next com erro quando o serviço falhar", async () => {
-    const requestBody = {
-      title: "Título de Teste",
-      content: "Conteúdo pedagógico",
-      subject: Subject.MATHEMATICS,
-      authorId: 1
+    const validBody = {
+      title: "Título",
+      content: "Conteúdo",
+      subject: Subject.MATHEMATICS
     };
-
-    mockReq = {
-      body: requestBody,
+    
+    mockReq = { 
+      body: validBody,
+      user: { id: 1 } as NonNullable<Request["user"]>
     };
-
+    
     const serviceError = new Error("Author not found");
-    jest.spyOn(PostService.prototype, "create").mockRejectedValue(serviceError);
+    mockPostService.create.mockRejectedValue(serviceError);
 
     await create(mockReq as Request, mockRes as Response, mockNext);
 

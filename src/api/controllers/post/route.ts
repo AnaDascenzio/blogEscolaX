@@ -8,14 +8,15 @@ import { remove } from "./delete";
 import { ensureAuthenticated } from "../../middlewares/ensure-authenticated";
 import { authorizeRoles } from "../../middlewares/authorize-roles";
 import { UserRole } from "../../entities/enums/user-roles.enum";
+import { uploadImage } from "../../middlewares/upload";
 
 const postRouter = Router();
 
 postRouter.get("/search", search);
 postRouter.get("/", findAll);
 postRouter.get("/:id", findById);
-postRouter.post("/", ensureAuthenticated, authorizeRoles(UserRole.TEACHER), create);
-postRouter.put("/:id", ensureAuthenticated, authorizeRoles(UserRole.TEACHER), update);
+postRouter.post("/", ensureAuthenticated, authorizeRoles(UserRole.TEACHER), uploadImage.single("image"), create);
+postRouter.put("/:id", ensureAuthenticated, authorizeRoles(UserRole.TEACHER), uploadImage.single("image"), update);
 postRouter.delete("/:id", ensureAuthenticated, authorizeRoles(UserRole.TEACHER), remove);
 
 export default postRouter;

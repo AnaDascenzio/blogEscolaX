@@ -6,6 +6,7 @@ import userRouter from './api/controllers/user/route';
 import postRouter from './api/controllers/post/route';
 import { errorMiddleware } from './api/middlewares/error.middleware';
 import cors from "cors";
+import path from "node:path";
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(
 );
 
 app.use(express.json());
+app.use("/uploads", express.static(path.resolve(process.cwd(), "uploads")));
 
 app.get("/", (_req, res) => {
   res.send("Hello World, testando fluxo CI!");

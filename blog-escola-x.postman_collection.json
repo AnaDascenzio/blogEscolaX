@@ -40,7 +40,7 @@
                 "exec": [
                   "const response = pm.response.json();",
                   "if (response.token) {",
-                  "    pm.globals.set(\"authToken\", response.token);",
+                  "    pm.collectionVariables.set(\"authToken\", response.token);",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -78,13 +78,68 @@
       "name": "Users",
       "item": [
         {
+          "name": "List Users",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users?role=STUDENT&page=1&limit=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "role",
+                  "value": "STUDENT",
+                  "description": "Opcional: TEACHER ou STUDENT. Sem filtro, lista ambos."
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Página iniciando em 1; padrão 1."
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Itens por página; padrão 20, máximo 100."
+                }
+              ]
+            },
+            "description": "Lista usuários ativos. Requer JWT de professor. Remova o parâmetro role para listar ambos os papéis."
+          },
+          "response": []
+        },
+        {
           "name": "Create User",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"teacher@escola.com\",\n  \"password\": \"password123\",\n  \"role\": \"TEACHER\"\n}",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"student@escola.com\",\n  \"password\": \"password123\",\n  \"role\": \"STUDENT\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -101,6 +156,7 @@
               ]
             }
           },
+          "description": "Cria um usuário. Requer JWT de professor. Como o cadastro público foi desabilitado, o primeiro professor deve ser provisionado fora da API; use esta requisição autenticada para cadastrar alunos ou outros professores.",
           "response": []
         },
         {
@@ -180,6 +236,16 @@
         {
           "name": "Update User",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "PUT",
             "header": [],
             "body": {
@@ -207,6 +273,42 @@
                 }
               ]
             }
+          },
+          "description": "Atualiza campos permitidos do usuário. Requer JWT de professor. A resposta não inclui senha nem hash.",
+          "response": []
+        },
+        {
+          "name": "Deactivate User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Inativa um usuário (soft delete) e retorna 204 No Content. Requer JWT de professor. Usuário inexistente ou já inativo retorna 404."
           },
           "response": []
         }

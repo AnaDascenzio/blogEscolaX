@@ -122,12 +122,27 @@ A API estará disponível em `http://localhost:3000`.
 
 | Método | Rota | Descrição | Autenticação |
 |--------|------|-----------|--------------|
-| POST | /users | Cria novo usuário | Pública |
+| GET | /users | Lista usuários ativos (`role`, `page`, `limit`; máximo 100 por página) | Professor |
+| POST | /users | Cria novo usuário | Professor |
 | POST | /users/signin | Realiza login e gera token JWT | Pública |
 | GET | /users/:id | Busca usuário por ID | Pública |
 | GET | /users/email/:email | Busca usuário por e-mail | Pública |
 | GET | /users/name/:name | Busca usuário por nome | Pública |
-| PUT | /users/:id | Atualiza usuário | Pública |
+| PUT | /users/:id | Atualiza usuário | Professor |
+| DELETE | /users/:id | Inativa usuário (soft delete) | Professor |
+
+`GET /users` lista somente usuários ativos. `role` aceita `TEACHER` ou `STUDENT`;
+sem esse filtro, retorna ambos os papéis. A paginação inicia em `page=1`, usa
+`limit=20` por padrão e aceita até 100 itens por página. Listas e respostas
+individuais nunca incluem senha ou hash.
+
+As operações administrativas de usuários exigem JWT válido e papel `TEACHER`
+obtido do cadastro ativo no servidor. O cadastro público não é permitido: o
+primeiro professor deve ser provisionado pela equipe responsável fora da API;
+depois, professores autenticados podem cadastrar alunos e outros professores.
+O login e as buscas por ID, e-mail ou nome ignoram cadastros inativos. A
+inativação repetida ou de um ID inexistente retorna `404`; o registro não é
+removido fisicamente.
 
 ### Exemplo de requisição — Criar Post
 

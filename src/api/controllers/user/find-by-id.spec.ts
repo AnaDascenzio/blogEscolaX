@@ -70,7 +70,7 @@ describe("User Controller - findById", () => {
     await findById(mockReq as Request, mockRes as Response, mockNext);
 
     expect(mockRes.status).toHaveBeenCalledWith(404);
-    expect(mockRes.json).toHaveBeenCalledWith({ message: "User not found" });
+    expect(mockRes.json).toHaveBeenCalledWith({ message: "Usuário não encontrado." });
     expect(mockNext).not.toHaveBeenCalled();
   });
 });

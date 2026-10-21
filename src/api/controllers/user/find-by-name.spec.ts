@@ -48,7 +48,7 @@ describe("User Controller - findByName", () => {
     await findByName(mockReq as Request, mockRes as Response, mockNext);
 
     expect(UserService.prototype.findByName).toHaveBeenCalledWith("John");
-    expect(mockRes.status).toHaveBeenCalledWith(201); // controller sets 201 status for name lookup
+    expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.json).toHaveBeenCalledWith({
       id: 1,
       name: "John Doe",
@@ -70,7 +70,7 @@ describe("User Controller - findByName", () => {
     await findByName(mockReq as Request, mockRes as Response, mockNext);
 
     expect(mockRes.status).toHaveBeenCalledWith(404);
-    expect(mockRes.json).toHaveBeenCalledWith({ message: "User not found" });
+    expect(mockRes.json).toHaveBeenCalledWith({ message: "Usuário não encontrado." });
     expect(mockNext).not.toHaveBeenCalled();
   });
 });

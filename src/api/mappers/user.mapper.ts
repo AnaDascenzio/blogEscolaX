@@ -1,4 +1,4 @@
-import { UserResponseDTO } from "../../dtos/user/user-response.dto";
+import { UserListItemDTO, UserResponseDTO } from "../../dtos/user/user-response.dto";
 import { IUser } from "../entities/models/user.interface";
 
 export function mapUserToResponseDTO(user: IUser): UserResponseDTO {
@@ -12,4 +12,14 @@ export function mapUserToResponseDTO(user: IUser): UserResponseDTO {
   };
 
   return response;
+}
+
+export function mapUserToListItemDTO(user: IUser): UserListItemDTO {
+  return {
+    id: user.id!,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    status: user.status,
+  };
 }

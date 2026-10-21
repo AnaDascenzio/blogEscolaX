@@ -49,7 +49,15 @@ describe("User Controller - update", () => {
     await update(mockReq as Request, mockRes as Response, mockNext);
 
     expect(UserService.prototype.update).toHaveBeenCalledWith(1, { name: "John Doe Updated" });
-    expect(mockRes.json).toHaveBeenCalledWith(mockUpdatedUser);
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json).toHaveBeenCalledWith({
+      id: 1,
+      name: "John Doe Updated",
+      email: "john@escola.com",
+      role: UserRole.TEACHER,
+      status: true,
+      posts: [],
+    });
     expect(mockNext).not.toHaveBeenCalled();
   });
 

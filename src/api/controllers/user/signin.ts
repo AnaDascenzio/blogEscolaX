@@ -17,9 +17,7 @@ export async function signin(req: Request, res: Response
     const userService = new UserService(userRepository)
 
      const user = await userService.signin(email);
-     if (!user) {
-        return res.status(404).json({ message: "User not found" });
-    }
+     if (!user) return res.status(401).json({ message: "Invalid credentials" });
     const doesPasswordMatch = await compare(password, user.password);
     if (!doesPasswordMatch) {
         return res.status(401).json({ message: "Invalid credentials" });

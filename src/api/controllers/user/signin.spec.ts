@@ -73,7 +73,7 @@ describe("User Controller - signin", () => {
     expect(mockRes.json).toHaveBeenCalledWith({ token: "mocked_jwt_token" });
   });
 
-  it("deve retornar 404 se o usuário não for encontrado", async () => {
+  it("deve retornar 401 se o usuário não existir ou estiver inativo", async () => {
     mockReq = {
       body: {
         email: "nonexistent@escola.com",
@@ -85,8 +85,8 @@ describe("User Controller - signin", () => {
 
     await signin(mockReq as Request, mockRes as Response);
 
-    expect(mockRes.status).toHaveBeenCalledWith(404);
-    expect(mockRes.json).toHaveBeenCalledWith({ message: "User not found" });
+    expect(mockRes.status).toHaveBeenCalledWith(401);
+    expect(mockRes.json).toHaveBeenCalledWith({ message: "Invalid credentials" });
   });
 
   it("deve retornar 401 se as credenciais forem inválidas", async () => {

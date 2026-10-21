@@ -9,3 +9,5 @@ export interface UserResponseDTO {
   status: boolean;
   posts: IPost[];
 }
+
+export type UserListItemDTO = Omit<UserResponseDTO, "posts">;

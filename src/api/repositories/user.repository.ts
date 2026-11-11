@@ -13,11 +13,19 @@ export class UserRepository {
   }
 
     async findByEmail(email: string): Promise<IUser | null> {
-        return this.repository.findOne({ where: { email, status: true } });
+        return this.repository
+            .createQueryBuilder('user')
+            .where('LOWER(user.email) = LOWER(:email)', { email: email.trim() })
+            .andWhere('user.status = :status', { status: true })
+            .getOne();
     }
 
     async emailExists(email: string): Promise<boolean> {
-        return this.repository.exists({ where: { email } });
+        return this.repository
+            .createQueryBuilder('user')
+            .where('LOWER(user.email) = LOWER(:email)', { email: email.trim() })
+            .andWhere('user.status = :status', { status: true })
+            .getExists();
     }
 
     async findByName(name: string): Promise<IUser | null> {
@@ -48,6 +56,17 @@ export class UserRepository {
         const user = await this.repository.findOne({ where: { id, status: true } })
         if (!user) {
             return null
+        }
+
+        if (data.email) {
+            const normalizedEmail = data.email.trim().toLowerCase();
+            const emailInUse = await this.repository.findOne({
+                where: { email: normalizedEmail, status: true },
+            });
+            if (emailInUse && Number(emailInUse.id) !== Number(id)) {
+                throw new Error("E-mail já cadastrado.");
+            }
+            data.email = normalizedEmail;
         }
 
         Object.assign(user, data)

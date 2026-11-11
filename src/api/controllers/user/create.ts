@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { hash } from 'bcryptjs'
+import { hash } from 'bcryptjs';
 import { createUserSchema } from "../../../dtos/user/create-user.dto";
 import { UserRepository } from "../../repositories/user.repository";
 import { UserService } from "../../services/user.service";
@@ -13,6 +13,7 @@ export async function create(req: Request, res: Response, next: NextFunction) {
         
         const userData = {
             ...validatedData,
+            email: validatedData.email.trim().toLowerCase(),
             password: hashedPassword,
             role: validatedData.role
         };

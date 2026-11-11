@@ -61,6 +61,45 @@ describe("User Controller - update", () => {
     expect(mockNext).not.toHaveBeenCalled();
   });
 
+  it("deve normalizar o e-mail para minúsculas na atualização", async () => {
+    mockReq = {
+      params: { id: "1" },
+      body: { email: "JoAo@Escola.COM" },
+    };
+
+    const mockUpdatedUser: IUser = {
+      id: 1,
+      name: "John Doe",
+      email: "joao@escola.com",
+      password: "hashed_password",
+      role: UserRole.TEACHER,
+      status: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    jest.spyOn(UserService.prototype, "update").mockResolvedValue(mockUpdatedUser);
+
+    await update(mockReq as Request, mockRes as Response, mockNext);
+
+    expect(UserService.prototype.update).toHaveBeenCalledWith(1, { email: "joao@escola.com" });
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+  });
+
+  it("deve chamar next com erro quando o e-mail já estiver em uso", async () => {
+    mockReq = {
+      params: { id: "1" },
+      body: { email: "duplicado@escola.com" },
+    };
+
+    const duplicateError = new Error("E-mail já cadastrado.");
+    jest.spyOn(UserService.prototype, "update").mockRejectedValue(duplicateError);
+
+    await update(mockReq as Request, mockRes as Response, mockNext);
+
+    expect(mockNext).toHaveBeenCalledWith(duplicateError);
+  });
+
   it("deve retornar 404 se o usuário a ser atualizado não for encontrado", async () => {
     mockReq = {
       params: { id: "99" },

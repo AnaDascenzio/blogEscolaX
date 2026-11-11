@@ -4,18 +4,18 @@ import { PostService } from '../../services/post.service';
 import { UserRepository } from '../../repositories/user.repository';
 
 export async function findAll(req: Request, res: Response, next: NextFunction) {
-
     try {
         const page = Number(req.query.page) || 1;
         const limit = Number(req.query.limit) || 10;
+        const subject = req.query.subject ? String(req.query.subject) : undefined;
 
         const postRepository = new PostRepository();
         const userRepository = new UserRepository();
         const postService = new PostService(postRepository, userRepository);
-        const result = await postService.findAll(page, limit);
+        const result = await postService.findAll(page, limit, subject);
         
         return res.status(200).json(result);
-} catch (error) {
+    } catch (error) {
         next(error);
     }
 }

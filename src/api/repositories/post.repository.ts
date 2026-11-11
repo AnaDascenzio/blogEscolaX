@@ -11,18 +11,24 @@ export class PostRepository implements IPostRepository {
     this.repository = appDataSource.getRepository(Post)
   }
 
-  async findAllActive(page: number = 1, limit: number = 10): Promise<{ post: IPost[], total: number }> {
-  const queryBuilder = this.repository.createQueryBuilder('post')
-    .leftJoinAndSelect('post.author', 'author') // Faz o JOIN explícito
-    .where('post.isDeleted = :isDeleted', { isDeleted: false })
-    .orderBy('post.createdAt', 'DESC')
-    .skip((page - 1) * limit)
-    .take(limit);
+  async findAllActive(page: number = 1, limit: number = 10, subject?: string): Promise<{ post: IPost[], total: number }> {
+    const queryBuilder = this.repository.createQueryBuilder('post')
+      .leftJoinAndSelect('post.author', 'author') // Faz o JOIN explícito
+      .where('post.isDeleted = :isDeleted', { isDeleted: false });
 
-  const [post, total] = await queryBuilder.getManyAndCount();
+    if (subject && subject !== 'ALL') {
+      queryBuilder.andWhere('post.subject = :subject', { subject });
+    }
 
-  return { post, total };
-}
+    queryBuilder
+      .orderBy('post.createdAt', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit);
+
+    const [post, total] = await queryBuilder.getManyAndCount();
+
+    return { post, total };
+  }
 
   async findActiveById(id: number): Promise<IPost | null> {
     return this.repository.findOne({
@@ -48,16 +54,16 @@ export class PostRepository implements IPostRepository {
   }
 
   async update(id: number, data: Partial<IPost>): Promise<IPost | null> {
-  const post = await this.repository.findOne({ where: { id, isDeleted: false } })
-  if (!post) {
-    return null
-  }
+    const post = await this.repository.findOne({ where: { id, isDeleted: false } })
+    if (!post) {
+      return null
+    }
 
-  const { title, content, summary, imageUrl, link, subject } = data
-  Object.assign(post, { title, content, summary, imageUrl, link, subject })
-  
-  return this.repository.save(post)
-}
+    const { title, content, summary, imageUrl, link, subject } = data
+    Object.assign(post, { title, content, summary, imageUrl, link, subject })
+    
+    return this.repository.save(post)
+  }
 
   async softDelete(id: number): Promise<void> {
     await this.repository.update({ id }, { isDeleted: true })

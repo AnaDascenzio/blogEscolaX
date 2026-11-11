@@ -50,7 +50,7 @@ describe("Post Controller - findAll", () => {
 
     await findAll(mockReq as Request, mockRes as Response, mockNext);
 
-    expect(PostService.prototype.findAll).toHaveBeenCalledWith(1, 10);
+    expect(PostService.prototype.findAll).toHaveBeenCalledWith(1, 10, undefined);
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.json).toHaveBeenCalledWith(mockServiceResult);
     expect(mockNext).not.toHaveBeenCalled();
@@ -67,7 +67,23 @@ describe("Post Controller - findAll", () => {
 
     await findAll(mockReq as Request, mockRes as Response, mockNext);
 
-    expect(PostService.prototype.findAll).toHaveBeenCalledWith(2, 5);
+    expect(PostService.prototype.findAll).toHaveBeenCalledWith(2, 5, undefined);
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json).toHaveBeenCalledWith(mockServiceResult);
+  });
+
+  it("deve filtrar por matéria quando o parâmetro subject for informado", async () => {
+    mockReq = {
+      query: { page: "1", limit: "6", subject: "MATHEMATICS" },
+    };
+
+    const mockServiceResult = { post: [], total: 0 };
+
+    jest.spyOn(PostService.prototype, "findAll").mockResolvedValue(mockServiceResult);
+
+    await findAll(mockReq as Request, mockRes as Response, mockNext);
+
+    expect(PostService.prototype.findAll).toHaveBeenCalledWith(1, 6, "MATHEMATICS");
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.json).toHaveBeenCalledWith(mockServiceResult);
   });

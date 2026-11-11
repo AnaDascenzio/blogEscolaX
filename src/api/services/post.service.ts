@@ -54,8 +54,8 @@ export class PostService {
     return post ? this.sanitizeAuthor(post) : null;
   }
 
-  public async findAll(page: number = 1, limit: number = 10) {
-    const result = await this.repository.findAllActive(page, limit);
+  public async findAll(page: number = 1, limit: number = 10, subject?: string) {
+    const result = await this.repository.findAllActive(page, limit, subject);
 
     const sanitizedPosts = result.post.map((post) => this.sanitizeAuthor(post));
 

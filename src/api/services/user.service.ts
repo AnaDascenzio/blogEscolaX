@@ -9,24 +9,26 @@ export class UserService {
     ) {}
 
     public async create(dto: CreateUserDTO): Promise<IUser> {
-        const emailAlreadyExists = await this.repository.emailExists(dto.email);
+        const normalizedEmail = dto.email.trim().toLowerCase();
+        const emailAlreadyExists = await this.repository.emailExists(normalizedEmail);
 
         if (emailAlreadyExists) {
             throw new Error("E-mail já cadastrado.");
         }
 
         const user: IUser = {
-        ...dto,
-        role: dto.role,
-        status: true,
-        createdAt: new Date()
+            ...dto,
+            email: normalizedEmail,
+            role: dto.role,
+            status: true,
+            createdAt: new Date()
         };
 
-    return this.repository.create(user);
+        return this.repository.create(user);
     }
 
     public async findById (id: number): Promise<IUser | null> {
-        return this.repository.findById(id)
+        return this.repository.findById(id);
     }
 
     public async findAll(page: number, limit: number, role?: IUser["role"]): Promise<{
@@ -47,18 +49,25 @@ export class UserService {
     }
 
     public async findByEmail (email: string): Promise<IUser | null> {
-        return this.repository.findByEmail(email)
+        return this.repository.findByEmail(email.trim().toLowerCase());
     }
 
     public async findByName (name: string): Promise<IUser | null> {
-        return this.repository.findByName(name)
+        return this.repository.findByName(name);
     }
 
     public async signin (email: string): Promise<IUser | null> {
-        return this.repository.findByEmail(email);
+        return this.repository.findByEmail(email.trim().toLowerCase());
     }
 
     async update(id: number, data: Partial<IUser>): Promise<IUser | null> {
+        if (data.email) {
+            data.email = data.email.trim().toLowerCase();
+            const existingUser = await this.repository.findByEmail(data.email);
+            if (existingUser && Number(existingUser.id) !== Number(id)) {
+                throw new Error("E-mail já cadastrado.");
+            }
+        }
         return this.repository.update(id, data);
     }
 

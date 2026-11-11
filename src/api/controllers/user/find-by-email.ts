@@ -7,11 +7,12 @@ import { z } from "zod";
 export async function findByEmail(req: Request, res: Response, next: NextFunction) {
     try {
         const email = z.email().parse(req.params.email);
+        const normalizedEmail = email.trim().toLowerCase();
 
         // TODO atribuir isso pra uma factory
-        const userRepository = new UserRepository()
-        const userService = new UserService(userRepository)
-        const user = await userService.findByEmail(email);
+        const userRepository = new UserRepository();
+        const userService = new UserService(userRepository);
+        const user = await userService.findByEmail(normalizedEmail);
 
         if (!user) {
             return res.status(404).json({ message: "Usuário não encontrado." });

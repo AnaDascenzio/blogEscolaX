@@ -1,4 +1,4 @@
-import {Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { UserRepository } from '../../repositories/user.repository';
 import { UserService } from '../../services/user.service';
 import { z } from 'zod';
@@ -10,7 +10,7 @@ import { IUser } from '../../entities/models/user.interface';
 const userIdSchema = z.coerce.number().int().positive();
 const updateUserSchema = z.object({
     name: z.string().min(3).optional(),
-    email: z.email().optional(),
+    email: z.string().email().optional(),
     password: z.string().min(6).optional(),
     role: z.enum(UserRole).optional(),
 }).refine((data) => Object.keys(data).length > 0, {
@@ -18,7 +18,6 @@ const updateUserSchema = z.object({
 });
 
 export async function update(req: Request, res: Response, next: NextFunction) {
-
     try {
         const id = userIdSchema.parse(req.params.id);
         const data = updateUserSchema.parse(req.body);
@@ -26,7 +25,7 @@ export async function update(req: Request, res: Response, next: NextFunction) {
         const userService = new UserService(userRepository);
         const updateData: Partial<IUser> = {};
         if (data.name !== undefined) updateData.name = data.name;
-        if (data.email !== undefined) updateData.email = data.email;
+        if (data.email !== undefined) updateData.email = data.email.trim().toLowerCase();
         if (data.role !== undefined) updateData.role = data.role;
         if (data.password !== undefined) updateData.password = await hash(data.password, 10);
 

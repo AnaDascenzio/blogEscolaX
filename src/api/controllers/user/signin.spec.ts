@@ -64,12 +64,31 @@ describe("User Controller - signin", () => {
     expect(jwt.sign).toHaveBeenCalledWith(
       {
         id: mockUser.id,
+        name: mockUser.name,
         email: mockUser.email,
         role: mockUser.role,
       },
       "test_jwt_secret",
       { expiresIn: "1d" }
     );
+    expect(mockRes.json).toHaveBeenCalledWith({ token: "mocked_jwt_token" });
+  });
+
+  it("deve repassar o e-mail para o service ao realizar login", async () => {
+    mockReq = {
+      body: {
+        email: "JoHn@Escola.COM",
+        password: "password123",
+      },
+    };
+
+    jest.spyOn(UserService.prototype, "signin").mockResolvedValue(mockUser);
+    (compare as jest.Mock).mockResolvedValue(true);
+    (jwt.sign as jest.Mock).mockReturnValue("mocked_jwt_token");
+
+    await signin(mockReq as Request, mockRes as Response);
+
+    expect(UserService.prototype.signin).toHaveBeenCalledWith("JoHn@Escola.COM");
     expect(mockRes.json).toHaveBeenCalledWith({ token: "mocked_jwt_token" });
   });
 

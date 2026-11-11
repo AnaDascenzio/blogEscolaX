@@ -12,8 +12,8 @@ import { Post } from "./post.entity";
 import { IUser } from "./models/user.interface";
 
 @Entity("users")
-@Index("idx_user_email", ["email"], { unique: true })
-export class User implements IUser{
+@Index("idx_user_email_active", ["email"], { unique: true, where: "status = true" })
+export class User implements IUser {
     
   @PrimaryGeneratedColumn("increment", { type: "bigint" })
   id: number;
@@ -21,7 +21,7 @@ export class User implements IUser{
   @Column({ type: "varchar", length: 200 })
   name: string;
 
-  @Column({ type: "varchar", length: 255, unique: true })
+  @Column({ type: "varchar", length: 255 })
   email: string;
 
   @Column({ type: "varchar", length: 255 })

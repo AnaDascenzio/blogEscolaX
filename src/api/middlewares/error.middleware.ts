@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
 
 export function errorMiddleware(
-  error: any,
+  error: unknown,
   req: Request,
   res: Response,
   _next: NextFunction
@@ -14,7 +14,9 @@ export function errorMiddleware(
     });
   }
 
-  if (error?.message === "E-mail já cadastrado.") {
+  const err = error as { code?: string; message?: string } | undefined;
+
+  if (err?.message === "E-mail já cadastrado.") {
     return res.status(400).json({
       message: "E-mail já cadastrado.",
     });
@@ -22,11 +24,11 @@ export function errorMiddleware(
 
   // Erro de violação de chave única do PostgreSQL (código 23505) ou mensagem de unique constraint
   if (
-    error?.code === "23505" ||
-    (typeof error?.message === "string" &&
-      (error.message.includes("unique constraint") ||
-       error.message.includes("duplicate key") ||
-       error.message.includes("users_email_key")))
+    err?.code === "23505" ||
+    (typeof err?.message === "string" &&
+      (err.message.includes("unique constraint") ||
+       err.message.includes("duplicate key") ||
+       err.message.includes("users_email_key")))
   ) {
     return res.status(400).json({
       message: "E-mail já cadastrado.",
@@ -36,6 +38,6 @@ export function errorMiddleware(
   console.error(error);
 
   return res.status(500).json({
-    message: error?.message || "Erro interno do servidor",
+    message: err?.message || "Erro interno do servidor",
   });
 }

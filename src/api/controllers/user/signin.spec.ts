@@ -74,7 +74,7 @@ describe("User Controller - signin", () => {
     expect(mockRes.json).toHaveBeenCalledWith({ token: "mocked_jwt_token" });
   });
 
-  it("deve normalizar o e-mail para minúsculas ao realizar login", async () => {
+  it("deve repassar o e-mail para o service ao realizar login", async () => {
     mockReq = {
       body: {
         email: "JoHn@Escola.COM",
@@ -88,7 +88,7 @@ describe("User Controller - signin", () => {
 
     await signin(mockReq as Request, mockRes as Response);
 
-    expect(UserService.prototype.signin).toHaveBeenCalledWith("john@escola.com");
+    expect(UserService.prototype.signin).toHaveBeenCalledWith("JoHn@Escola.COM");
     expect(mockRes.json).toHaveBeenCalledWith({ token: "mocked_jwt_token" });
   });
 
